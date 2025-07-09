@@ -58,14 +58,37 @@ Pathway streams historical data (`dataset.csv`) with preserved timestamps. Prici
 
 
 ### Data Flow Diagram:
-Dataset.csv
-↓
-Pathway Ingestion (Schema → Select → Compute → Output)
-↓
-Generated Output CSV (Model 1 or 2)
-↓
-Pandas + Bokeh
-↓
-Interactive Visualizations
+
+              +----------------------+
+              |    dataset.csv       |
+              +----------+-----------+
+                         |
+                         v
+        +----------------+------------------+
+        |   Pathway Engine (Streaming)      |
+        | - Reads data                      |
+        | - Preserves timestamps            |
+        +----------------+------------------+
+                         |
+         +---------------+----------------+
+         |                                |
+         v                                v
++---------------------+      +-----------------------------+
+|  Model 1: Static     |      |  Model 2: Demand-Based      |
+|  Pricing             |      |  Pricing with Demand Fn     |
++----------+----------+      +-----------------------------+
+           |                                |
+           v                                v
++---------------------+      +-----------------------------+
+|  Output JSONL File   |      |  Output CSV File            |
+|  (pricing_output)    |      |  (model2_stream_output)     |
++----------+----------+      +-----------------------------+
+           |                                |
+           v                                v
+     +--------------------------+     +-------------------------+
+     |   Bokeh / Panel Visuals  |     |  Bokeh Interactive Plots|
+     |   (per-lot price trend)  |     |  (real-time price trend)|
+     +--------------------------+     +-------------------------+
+
 
 
