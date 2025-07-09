@@ -59,36 +59,36 @@ Pathway streams historical data (`dataset.csv`) with preserved timestamps. Prici
 
 ### Data Flow Diagram:
 
-              +----------------------+
-              |    dataset.csv       |
-              +----------+-----------+
-                         |
-                         v
-        +----------------+------------------+
-        |   Pathway Engine (Streaming)      |
-        | - Reads data                      |
-        | - Preserves timestamps            |
-        +----------------+------------------+
-                         |
-         +---------------+----------------+
-         |                                |
-         v                                v
-+---------------------+      +-----------------------------+
-|  Model 1: Static     |      |  Model 2: Demand-Based      |
-|  Pricing             |      |  Pricing with Demand Fn     |
-+----------+----------+      +-----------------------------+
-           |                                |
-           v                                v
-+---------------------+      +-----------------------------+
-|  Output JSONL File   |      |  Output CSV File            |
-|  (pricing_output)    |      |  (model2_stream_output)     |
-+----------+----------+      +-----------------------------+
-           |                                |
-           v                                v
-     +--------------------------+     +-------------------------+
-     |   Bokeh / Panel Visuals  |     |  Bokeh Interactive Plots|
-     |   (per-lot price trend)  |     |  (real-time price trend)|
-     +--------------------------+     +-------------------------+
+                        ┌─────────────────────┐
+                        │     dataset.csv     │
+                        └────────┬────────────┘
+                                 │
+                                 ▼
+                   ┌─────────────────────────────┐
+                   │     Pathway Streaming Engine │
+                   │  (real-time timestamp flow)  │
+                   └────────┬─────────────┬───────┘
+                            │             │
+             ┌──────────────▼──┐     ┌────▼────────────────┐
+             │   Model 1:      │     │   Model 2:           │
+             │ Static Pricing  │     │ Demand-Based Pricing│
+             └──────┬──────────┘     └──────────┬──────────┘
+                    │                           │
+          ┌─────────▼─────────┐       ┌─────────▼────────────────────┐
+          │ Compute price via │       │ Feature Engineering:         │
+          │ OccupancyRate     │       │ - Occupancy Rate             │
+          │ Pricet+1 = ...    │       │ - Queue, Traffic, Vehicle... │
+          └─────────┬─────────┘       └─────────┬────────────────────┘
+                    │                           │
+          ┌─────────▼─────────────┐   ┌─────────▼────────────────────┐
+          │ pricing_output.jsonl  │   │ model2_stream_output.csv     │
+          └─────────┬─────────────┘   └─────────┬────────────────────┘
+                    │                           │
+       ┌────────────▼──────────────┐ ┌──────────▼──────────────┐
+       │  Bokeh Visuals (per lot)  │ │ Real-Time Bokeh Graphs  │
+       └───────────────────────────┘ └──────────────────────────┘
+
+
 
 
 
