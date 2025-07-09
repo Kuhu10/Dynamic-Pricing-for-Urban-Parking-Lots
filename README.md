@@ -68,6 +68,4 @@ Pandas + Bokeh
 ↓
 Interactive Visualizations
 
-markdown
-Copy code
 
